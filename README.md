@@ -4,6 +4,9 @@
 
 Ontwikkeld door PE5JW voor gebruik op JOTA en andere activiteiten met het PA6VLG/J station.
 
+![MultiLogCAT in gebruik tijdens JOTA 2026](screenshot.png)
+*MultiLogCAT in gebruik op JOTA 2026 — SparkSDR op 40m LSB, frequentie automatisch bijgewerkt in Multilog.*
+
 > ⚠️ **Beta / snel gebouwd voor JOTA 2026**
 > Deze app is in korte tijd gemaakt voor een specifiek evenement, weinig getest en kan bugs bevatten.
 > Gebruik op eigen risico. Feedback en bugmeldingen welkom via [Issues](../../issues).
