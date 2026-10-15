@@ -1,0 +1,787 @@
+<title>MultiLogCAT Handleiding</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+
+<style>
+/* Layout: sticky sidebar nav + scrolling content, single column on mobile */
+:root {
+  --bg:        #f7f8fa;
+  --surface:   #ffffff;
+  --border:    #e2e5ea;
+  --fg:        #1a1d23;
+  --fg-muted:  #6b7280;
+  --accent:    #1a6ef5;
+  --accent-bg: #eff4ff;
+  --warn:      #d97706;
+  --warn-bg:   #fffbeb;
+  --ok:        #059669;
+  --ok-bg:     #ecfdf5;
+  --nav-w:     240px;
+  --radius:    8px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:        #0f1117;
+    --surface:   #1a1d27;
+    --border:    #2a2e3a;
+    --fg:        #e8eaf0;
+    --fg-muted:  #8b92a5;
+    --accent:    #4d8ef7;
+    --accent-bg: #1a2540;
+    --warn:      #f59e0b;
+    --warn-bg:   #1f1709;
+    --ok:        #34d399;
+    --ok-bg:     #0a1f17;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:        #0f1117;
+  --surface:   #1a1d27;
+  --border:    #2a2e3a;
+  --fg:        #e8eaf0;
+  --fg-muted:  #8b92a5;
+  --accent:    #4d8ef7;
+  --accent-bg: #1a2540;
+  --warn:      #f59e0b;
+  --warn-bg:   #1f1709;
+  --ok:        #34d399;
+  --ok-bg:     #0a1f17;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--fg);
+  background: var(--bg);
+  padding-left: max(0px, env(safe-area-inset-left, 0px));
+  padding-right: max(0px, env(safe-area-inset-right, 0px));
+}
+
+/* ── Layout shell ─────────────────────────────── */
+.shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── Sidebar nav ──────────────────────────────── */
+.nav {
+  width: var(--nav-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 0 0 24px;
+}
+.nav-logo {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+.nav-logo .app-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -.3px;
+}
+.nav-logo .version {
+  font-size: 11px;
+  color: var(--fg-muted);
+  margin-top: 2px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.nav a {
+  display: block;
+  padding: 6px 20px;
+  color: var(--fg-muted);
+  text-decoration: none;
+  font-size: 13.5px;
+  border-left: 3px solid transparent;
+  transition: color .15s, border-color .15s, background .15s;
+}
+.nav a:hover {
+  color: var(--fg);
+  background: var(--accent-bg);
+}
+.nav a.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  background: var(--accent-bg);
+}
+.nav-section {
+  padding: 14px 20px 4px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+/* ── Main content ─────────────────────────────── */
+.content {
+  flex: 1;
+  min-width: 0;
+  padding: 40px max(24px, env(safe-area-inset-right, 0px)) 80px max(40px, env(safe-area-inset-left, 0px));
+  max-width: 820px;
+}
+
+/* ── Section headings ─────────────────────────── */
+.section {
+  margin-bottom: 56px;
+}
+h1 {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -.5px;
+  text-wrap: balance;
+  margin: 0 0 8px;
+  color: var(--fg);
+}
+h1 .sub {
+  display: block;
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--fg-muted);
+  letter-spacing: 0;
+  margin-top: 4px;
+}
+h2 {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -.3px;
+  text-wrap: balance;
+  margin: 0 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--border);
+  color: var(--fg);
+}
+h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 24px 0 8px;
+  color: var(--fg);
+}
+p { margin: 0 0 12px; }
+
+/* ── Step blocks ──────────────────────────────── */
+.steps { display: flex; flex-direction: column; gap: 0; }
+.step {
+  display: flex;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+.step:last-child { border-bottom: none; }
+.step-num {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+}
+.step-body { flex: 1; min-width: 0; }
+.step-body strong { display: block; margin-bottom: 4px; }
+
+/* ── Code / command ───────────────────────────── */
+code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+.cmd-block {
+  background: #0f1117;
+  color: #c9d1e0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  padding: 14px 18px;
+  border-radius: var(--radius);
+  overflow-x: auto;
+  margin: 8px 0 16px;
+  line-height: 1.7;
+  border: 1px solid #2a2e3a;
+}
+.cmd-block .prompt { color: #4d8ef7; user-select: none; }
+.cmd-block .comment { color: #6b7a99; }
+
+/* ── Callout boxes ────────────────────────────── */
+.callout {
+  display: flex;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  margin: 16px 0;
+  font-size: 14px;
+}
+.callout.warn { background: var(--warn-bg); border-left: 3px solid var(--warn); }
+.callout.ok   { background: var(--ok-bg);   border-left: 3px solid var(--ok); }
+.callout.info { background: var(--accent-bg); border-left: 3px solid var(--accent); }
+.callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.callout p { margin: 0; }
+
+/* ── Screenshot placeholder ───────────────────── */
+.screenshot {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin: 16px 0;
+  background: var(--surface);
+}
+.screenshot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.screenshot-cap {
+  font-size: 12.5px;
+  color: var(--fg-muted);
+  padding: 7px 12px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+  font-style: italic;
+}
+
+/* ── Scherm-mockup (tekst-based) ──────────────── */
+.mockup {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin: 16px 0;
+}
+.mockup-bar {
+  background: var(--border);
+  padding: 8px 14px;
+  font-size: 12px;
+  color: var(--fg-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.mockup-bar .dots { display: flex; gap: 5px; }
+.mockup-bar .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--fg-muted); opacity: .4; }
+.mockup-body {
+  background: var(--surface);
+  padding: 16px;
+  font-size: 13px;
+}
+
+/* ── Field table ──────────────────────────────── */
+.field-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13.5px; }
+.field-table th {
+  text-align: left;
+  padding: 8px 12px;
+  background: var(--bg);
+  border-bottom: 2px solid var(--border);
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--fg-muted);
+}
+.field-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.field-table tr:last-child td { border-bottom: none; }
+.field-table td:first-child { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--accent); white-space: nowrap; }
+
+/* ── Tag badges ───────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 600;
+  gap: 4px;
+}
+.badge.req  { background: var(--accent-bg); color: var(--accent); }
+.badge.opt  { background: var(--bg);        color: var(--fg-muted); border: 1px solid var(--border); }
+
+/* ── Cover hero ───────────────────────────────── */
+.hero {
+  background: linear-gradient(135deg, #1a2a4a 0%, #0f1117 100%);
+  color: #e8eaf0;
+  padding: 40px 40px 36px;
+  border-radius: var(--radius);
+  margin-bottom: 40px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -30px; right: -30px;
+  width: 180px; height: 180px;
+  border-radius: 50%;
+  background: rgba(77,142,247,.12);
+}
+.hero-call { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #4d8ef7; margin-bottom: 8px; }
+.hero h1   { color: #ffffff; font-size: 32px; margin-bottom: 6px; }
+.hero p    { color: #8b92a5; font-size: 14px; margin: 0; }
+.hero-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+.hero-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(77,142,247,.2);
+  color: #4d8ef7;
+  border: 1px solid rgba(77,142,247,.3);
+}
+
+/* ── TOC on mobile ────────────────────────────── */
+@media (max-width: 700px) {
+  .nav { display: none; }
+  .content { padding: 24px max(16px, env(safe-area-inset-right,0px)) 60px max(16px, env(safe-area-inset-left,0px)); }
+  h1 { font-size: 22px; }
+  h2 { font-size: 17px; }
+  .hero { padding: 24px 20px; }
+  .hero h1 { font-size: 22px; }
+}
+
+/* ── Scroll target offset ─────────────────────── */
+.section { scroll-margin-top: 24px; }
+</style>
+
+<div class="shell">
+
+<!-- ── Sidebar ─────────────────────────────────── -->
+<nav class="nav" id="sidebar">
+  <div class="nav-logo">
+    <div class="app-name">MultiLogCAT</div>
+    <div class="version">v16 · PE5JW &amp; Claude</div>
+  </div>
+  <div class="nav-section">Installatie</div>
+  <a href="#vereisten">Vereisten</a>
+  <a href="#python">Python installeren</a>
+  <a href="#playwright">Playwright &amp; Chromium</a>
+  <a href="#hamlib">Hamlib downloaden</a>
+  <a href="#eerste-start">Eerste start</a>
+  <div class="nav-section">Gebruik</div>
+  <a href="#interface">De interface</a>
+  <a href="#radio">Radio instellen</a>
+  <a href="#website">Website login</a>
+  <a href="#starten">Starten</a>
+  <a href="#live">Live gebruik</a>
+  <div class="nav-section">Geavanceerd</div>
+  <a href="#meerdere-gebruikers">Meerdere gebruikers</a>
+  <a href="#exe">EXE bouwen</a>
+  <a href="#problemen">Problemen oplossen</a>
+</nav>
+
+<!-- ── Content ─────────────────────────────────── -->
+<main class="content">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-call">PE5JW @ PA6VLG/J · JOTA 2026</div>
+    <h1>MultiLogCAT</h1>
+    <p>Automatisch frequentie, band en mode vanuit de radio invullen in het online Multilog logboek.</p>
+    <div class="hero-badges">
+      <span class="hero-badge">Windows</span>
+      <span class="hero-badge">Hamlib / rigctld</span>
+      <span class="hero-badge">SparkSDR</span>
+      <span class="hero-badge">FLRig</span>
+      <span class="hero-badge">multilog.endoria.net</span>
+    </div>
+  </div>
+
+  <!-- ── INSTALLATIE ──────────────────────────── -->
+
+  <div class="section" id="vereisten">
+    <h2>Vereisten</h2>
+    <p>MultiLogCAT heeft de volgende software nodig. Alles is gratis verkrijgbaar.</p>
+    <table class="field-table">
+      <tr><th>Software</th><th>Versie</th><th>Opmerking</th></tr>
+      <tr><td>Python</td><td>3.10 of nieuwer</td><td>Inclusief pip. <a href="https://www.python.org/downloads/" target="_blank">python.org</a></td></tr>
+      <tr><td>Playwright</td><td>meegeleverd via pip</td><td>Browser-automatisering</td></tr>
+      <tr><td>Chromium</td><td>via playwright install</td><td>Wordt automatisch gedownload</td></tr>
+      <tr><td>Hamlib</td><td>4.7.2 (aanbevolen)</td><td>Alleen nodig bij serieel (COM) verbinding</td></tr>
+    </table>
+    <div class="callout info">
+      <span class="callout-icon">ℹ️</span>
+      <p><strong>SparkSDR / FLRig gebruikers:</strong> Hamlib hoeft <em>niet</em> geïnstalleerd te worden. MultiLogCAT verbindt dan rechtstreeks via het netwerk (IP:poort).</p>
+    </div>
+  </div>
+
+  <div class="section" id="python">
+    <h2>Stap 1 — Python installeren</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <strong>Download Python van <a href="https://www.python.org/downloads/" target="_blank">python.org/downloads</a></strong>
+          Kies de nieuwste Python 3.x versie voor Windows (64-bit).
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <strong>Vink "Add Python to PATH" aan</strong>
+          Dit is essentieel — anders werkt <code>pip</code> niet vanuit PowerShell.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <strong>Controleer de installatie in PowerShell</strong>
+          <div class="cmd-block"><span class="prompt">PS&gt; </span>python --version<br><span class="comment"># Verwacht: Python 3.11.x of hoger</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="playwright">
+    <h2>Stap 2 — Playwright &amp; Chromium installeren</h2>
+    <p>Open PowerShell en voer de volgende twee commando's uit:</p>
+    <div class="cmd-block">
+      <span class="prompt">PS&gt; </span>pip install playwright<br>
+      <span class="prompt">PS&gt; </span>playwright install chromium
+    </div>
+    <div class="callout warn">
+      <span class="callout-icon">⚠️</span>
+      <p>Het tweede commando download Chromium (~150 MB). Dit duurt even afhankelijk van je internetverbinding. Wacht tot het klaar is.</p>
+    </div>
+    <div class="callout ok">
+      <span class="callout-icon">✅</span>
+      <p>Als je later de foutmelding <em>"Executable doesn't exist"</em> ziet, voer dan opnieuw <code>playwright install chromium</code> uit.</p>
+    </div>
+  </div>
+
+  <div class="section" id="hamlib">
+    <h2>Stap 3 — Hamlib downloaden <span class="badge opt">Alleen bij COM-poort</span></h2>
+    <p>Hamlib is alleen nodig als je de radio via een seriële (COM) poort verbindt. Bij SparkSDR, FLRig of rigctld via netwerk sla je deze stap over.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <strong>Download de Windows 64-bit ZIP van Hamlib 4.7.2</strong>
+          Klik op de <em>⬇ Download Hamlib</em> link in de app, of ga direct naar:<br>
+          <a href="https://github.com/Hamlib/Hamlib/releases/tag/4.7.2" target="_blank">github.com/Hamlib/Hamlib/releases/tag/4.7.2</a>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <strong>Pak het ZIP-bestand uit</strong>
+          Bijv. naar <code>C:\ham\hamlib-w64-4.7.2\</code>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <strong>Noteer het pad naar rigctld.exe</strong>
+          Dat is iets als:<br>
+          <code>C:\ham\hamlib-w64-4.7.2\bin\rigctld.exe</code><br>
+          Dit vul je straks in de app in.
+        </div>
+      </div>
+    </div>
+    <div class="callout info">
+      <span class="callout-icon">📋</span>
+      <p><strong>Licentie:</strong> Hamlib valt onder de GPL v2 licentie en mag niet meegeleverd worden in andere software. Daarom download je het zelf.</p>
+    </div>
+  </div>
+
+  <div class="section" id="eerste-start">
+    <h2>Stap 4 — MultiLogCAT starten</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <strong>Kopieer multilogcat.py naar een vaste map</strong>
+          Bijv. <code>C:\ham\MultiLogCAT\</code>. De <code>config.json</code> wordt automatisch aangemaakt in dezelfde map.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <strong>Start de app via PowerShell</strong>
+          <div class="cmd-block"><span class="prompt">PS&gt; </span>python C:\ham\MultiLogCAT\multilogcat.py</div>
+          Of maak een snelkoppeling met dit commando als doel.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── GEBRUIK ──────────────────────────────── -->
+
+  <div class="section" id="interface">
+    <h2>De interface</h2>
+    <p>Het hoofdvenster van MultiLogCAT bestaat uit vier secties:</p>
+
+    <div class="screenshot">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" alt="" style="height:4px;background:var(--border);">
+    </div>
+
+    <div class="mockup">
+      <div class="mockup-bar">
+        <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        MultiLogCAT — PE5JW
+      </div>
+      <div class="mockup-body">
+        <div style="border:1px solid var(--border);border-radius:6px;padding:10px 14px;margin-bottom:8px;">
+          <strong style="font-size:12px;color:var(--fg-muted);text-transform:uppercase;letter-spacing:.05em;">📻 Radio instellingen</strong>
+          <div style="margin-top:6px;font-size:13px;color:var(--fg-muted);">Radio model · Verbinding (Serieel / Netwerk) · COM poort / IP:poort</div>
+        </div>
+        <div style="border:1px solid var(--border);border-radius:6px;padding:10px 14px;margin-bottom:8px;">
+          <strong style="font-size:12px;color:var(--fg-muted);text-transform:uppercase;letter-spacing:.05em;">🔧 Hamlib</strong>
+          <div style="margin-top:6px;font-size:13px;color:var(--fg-muted);">Pad naar rigctld.exe · ⬇ Download link</div>
+        </div>
+        <div style="border:1px solid var(--border);border-radius:6px;padding:10px 14px;margin-bottom:8px;">
+          <strong style="font-size:12px;color:var(--fg-muted);text-transform:uppercase;letter-spacing:.05em;">🌐 Website login</strong>
+          <div style="margin-top:6px;font-size:13px;color:var(--fg-muted);">URL · Call · Wachtwoord · ☑ Wachtwoord opslaan</div>
+        </div>
+        <div style="border:1px solid var(--accent);border-radius:6px;padding:10px 14px;margin-bottom:8px;background:var(--accent-bg);">
+          <strong style="font-size:12px;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;">📊 Live radio data</strong>
+          <div style="margin-top:6px;font-size:13px;font-family:'JetBrains Mono',monospace;color:var(--accent);">14.175000 MHz · 20m · USB</div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:4px;">
+          <span style="background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:5px 12px;font-size:13px;">💾 Opslaan</span>
+          <span style="background:var(--accent);color:#fff;border-radius:5px;padding:5px 12px;font-size:13px;">▶ Start</span>
+          <span style="background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:5px 12px;font-size:13px;color:var(--fg-muted);">⏹ Stop</span>
+          <span style="background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:5px 12px;font-size:13px;color:var(--fg-muted);">✖ Afsluiten</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="radio">
+    <h2>Radio instellen</h2>
+
+    <h3>Verbindingstype kiezen</h3>
+    <p>MultiLogCAT ondersteunt twee manieren om met de radio te verbinden:</p>
+    <table class="field-table">
+      <tr><th>Type</th><th>Wanneer gebruiken</th><th>Wat invullen</th></tr>
+      <tr><td>Serieel (COM)</td><td>Radio direct via USB/serieel op de PC aangesloten</td><td>COM poort + baudrate + rigctld.exe pad</td></tr>
+      <tr><td>Netwerk (IP:poort)</td><td>SparkSDR, FLRig, SDR Console of rigctld op het netwerk</td><td>IP-adres + poortnummer</td></tr>
+    </table>
+
+    <h3>Bekende poortnummers</h3>
+    <p>Klik op een snelknop om het poortnummer direct in te vullen:</p>
+    <table class="field-table">
+      <tr><th>Knop</th><th>Software</th></tr>
+      <tr><td>19090</td><td>Eigen/alternatieve instelling</td></tr>
+      <tr><td>51111</td><td>SparkSDR (standaard)</td></tr>
+      <tr><td>12345</td><td>FLRig (standaard)</td></tr>
+      <tr><td>4532</td><td>rigctld / SDR Console (standaard)</td></tr>
+    </table>
+
+    <h3>Radio model</h3>
+    <p>Kies je radio uit de keuzelijst. Voor modellen die er niet bij staan, kies <em>"Anders (handmatig model nr.)"</em> en vul het Hamlib modelnummer in. De <em>🔗 Hamlib lijst</em> link opent de volledige lijst op GitHub.</p>
+
+    <div class="callout info">
+      <span class="callout-icon">💡</span>
+      <p><strong>SparkSDR gebruikers:</strong> Kies <em>"SparkSDR / NET rigctl"</em> als model, selecteer <em>Netwerk</em>, en gebruik poort <code>51111</code>. Hamlib is niet nodig.</p>
+    </div>
+  </div>
+
+  <div class="section" id="website">
+    <h2>Website login instellen</h2>
+    <table class="field-table">
+      <tr><th>Veld</th><th>Waarde</th></tr>
+      <tr><td>URL</td><td><code>https://multilog.endoria.net/index.php</code></td></tr>
+      <tr><td>Call</td><td>Je Multilog gebruikersnaam (roepletters, bijv. <code>pe5jw</code>)</td></tr>
+      <tr><td>Wachtwoord</td><td>Je Multilog wachtwoord</td></tr>
+      <tr><td>☑ Wachtwoord opslaan</td><td>Aangevinkt = opgeslagen in config.json · Uitgevinkt = elke keer vragen</td></tr>
+    </table>
+    <div class="callout warn">
+      <span class="callout-icon">🔒</span>
+      <p>Bij gedeelde computers: zet het vinkje <em>uit</em>. MultiLogCAT vraagt dan bij elke start om het wachtwoord via een apart scherm.</p>
+    </div>
+  </div>
+
+  <div class="section" id="starten">
+    <h2>MultiLogCAT starten</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <strong>Vul alle instellingen in en klik 💾 Opslaan</strong>
+          De instellingen worden bewaard in <code>config.json</code> naast de app.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <strong>Zorg dat de radio software actief is</strong>
+          SparkSDR, FLRig of SDR Console moet al draaien vóórdat je op Start klikt.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <strong>Klik ▶ Start</strong>
+          MultiLogCAT verbindt met de radio en opent automatisch de Chromium browser. De browser logt in op multilog.endoria.net.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <strong>De statusregel toont "Verbonden ✓ — polling radio..."</strong>
+          De live data sectie toont de actuele frequentie, band en mode.
+        </div>
+      </div>
+    </div>
+
+    <div class="callout ok">
+      <span class="callout-icon">✅</span>
+      <p>De browser opent gemaximaliseerd naast de app. Je kunt QSO-gegevens (call, naam, land) gewoon handmatig invullen in de browser — MultiLogCAT vult alleen freq, band en mode automatisch in.</p>
+    </div>
+  </div>
+
+  <div class="section" id="live">
+    <h2>Live gebruik</h2>
+    <p>Zodra MultiLogCAT verbonden is, controleert het elke 2 seconden of de frequentie of mode veranderd is. Bij een wijziging worden freq, band en mode automatisch bijgewerkt in het Multilog formulier.</p>
+
+    <div class="screenshot">
+      <img src="/root/.claude/uploads/1fbe070f-10bd-5538-829f-8de070e742db/3b841aa7-image.png" alt="MultiLogCAT in gebruik — 10.125 MHz / 30m / USB">
+      <div class="screenshot-cap">MultiLogCAT actief: 10.125 MHz op 30m, mode USB. De website toont automatisch de juiste band.</div>
+    </div>
+
+    <h3>Statusmeldingen</h3>
+    <table class="field-table">
+      <tr><th>Melding</th><th>Betekenis</th></tr>
+      <tr><td>Verbonden ✓ — polling radio...</td><td>Alles werkt, radio wordt uitgelezen</td></tr>
+      <tr><td>Laatste update: 09:15:54</td><td>Website succesvol bijgewerkt op dat tijdstip</td></tr>
+      <tr><td>Fout bij invullen: ...</td><td>Website kon niet bijgewerkt worden — zie tekst voor oorzaak</td></tr>
+      <tr><td>Browser openen en inloggen...</td><td>Even wachten — Chromium start op</td></tr>
+    </table>
+
+    <h3>Credit in de browser</h3>
+    <p>Onderaan de Multilog pagina in de browser verschijnt automatisch:<br>
+    <strong>"Multilog 2019 by PA3TON met MultilogCAT door PE5JW &amp; Claude"</strong></p>
+  </div>
+
+  <!-- ── GEAVANCEERD ───────────────────────────── -->
+
+  <div class="section" id="meerdere-gebruikers">
+    <h2>Meerdere gebruikers</h2>
+    <p>MultiLogCAT ondersteunt meerdere operators op dezelfde PC via de wachtwoord-instelling:</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">A</div>
+        <div class="step-body">
+          <strong>Wachtwoord opslaan uitvinken</strong>
+          Elke operator vult bij het starten z'n eigen call en wachtwoord in via het login-scherm. De call wordt alvast ingevuld vanuit de config; alleen het wachtwoord moet getypt worden.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">B</div>
+        <div class="step-body">
+          <strong>Aparte config per operator</strong>
+          Maak voor elke operator een eigen map met <code>multilogcat.py</code> en eigen <code>config.json</code>. Elke map heeft dan de call van die operator vooringevuld.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="exe">
+    <h2>EXE bouwen (zonder Python)</h2>
+    <p>Voor computers zonder Python kun je een zelfstandige EXE bouwen. Gebruik hiervoor het meegeleverde <code>build_exe.bat</code> script.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <strong>Zet multilogcat.py en build_exe.bat in dezelfde map</strong>
+          Bijv. <code>C:\ham\MultiLogCAT\</code>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <strong>Dubbelklik build_exe.bat</strong>
+          Het script installeert PyInstaller, bouwt de EXE en downloadt Chromium naast de EXE. Dit duurt enkele minuten.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <strong>Distribueer de map dist\MultiLogCAT\</strong>
+          Start op de doelcomputer via <code>MultiLogCAT_start.bat</code>. De <code>ms-playwright</code> submap (Chromium) moet er altijd naast blijven.
+        </div>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <span class="callout-icon">⚠️</span>
+      <p>Kopieer altijd de <strong>complete</strong> map <code>dist\MultiLogCAT\</code> inclusief de <code>ms-playwright</code> submap. Zonder Chromium start de app niet.</p>
+    </div>
+  </div>
+
+  <div class="section" id="problemen">
+    <h2>Problemen oplossen</h2>
+
+    <h3>"Executable doesn't exist" — Chromium niet gevonden</h3>
+    <div class="cmd-block"><span class="prompt">PS&gt; </span>playwright install chromium</div>
+
+    <h3>"Kan niet verbinden met 127.0.0.1:51111"</h3>
+    <p>SparkSDR (of andere software) is nog niet gestart. Start eerst de radio-software, daarna pas MultiLogCAT.</p>
+
+    <h3>Band klopt niet op de website</h3>
+    <p>MultiLogCAT overschrijft de band na 300ms op basis van de frequentie. Als de band toch verkeerd staat, controleer dan of de frequentie correct uitgelezen wordt (zie Live radio data in de app).</p>
+
+    <h3>"Logboekformulier niet gevonden na inloggen"</h3>
+    <p>Controleer de URL, call en wachtwoord in de Website login sectie. De URL moet eindigen op <code>/index.php</code>.</p>
+
+    <h3>App test zonder radio (COM-poort)</h3>
+    <p>Simuleer een rigctld server met ncat (Nmap):</p>
+    <div class="cmd-block">
+      <span class="comment"># In PowerShell (ncat uit Nmap nodig)</span><br>
+      <span class="prompt">PS&gt; </span>ncat -l -p 4532 -k
+    </div>
+
+    <h3>Instellingen resetten</h3>
+    <p>Verwijder <code>config.json</code> naast de app. De app start dan met standaard instellingen.</p>
+  </div>
+
+</main>
+</div>
+
+<script>
+// Actieve nav-link bijhouden bij scrollen
+const links = document.querySelectorAll('.nav a');
+const sections = [...document.querySelectorAll('.section[id]')];
+
+function updateNav() {
+  let current = sections[0]?.id;
+  for (const s of sections) {
+    if (s.getBoundingClientRect().top <= 80) current = s.id;
+  }
+  links.forEach(l => {
+    l.classList.toggle('active', l.getAttribute('href') === '#' + current);
+  });
+}
+window.addEventListener('scroll', updateNav, { passive: true });
+updateNav();
+
+// Smooth scroll
+links.forEach(l => l.addEventListener('click', e => {
+  const id = l.getAttribute('href').slice(1);
+  const el = document.getElementById(id);
+  if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth' }); }
+}));
+</script>

@@ -1,0 +1,15 @@
+# Config met mogelijk wachtwoord — niet committen
+config.json
+
+# PyInstaller output
+dist/
+build/
+*.spec
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Windows
+Thumbs.db
+desktop.ini
