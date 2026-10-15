@@ -378,6 +378,7 @@ code {
   <a href="#playwright">Playwright &amp; Chromium</a>
   <a href="#hamlib">Hamlib downloaden</a>
   <a href="#eerste-start">Eerste start</a>
+  <a href="#linux">Linux installatie ⚠️</a>
   <div class="nav-section">Gebruik</div>
   <a href="#interface">De interface</a>
   <a href="#radio">Radio instellen</a>
@@ -388,10 +389,17 @@ code {
   <a href="#meerdere-gebruikers">Meerdere gebruikers</a>
   <a href="#exe">EXE bouwen</a>
   <a href="#problemen">Problemen oplossen</a>
+  <a href="#beperkingen">Beperkingen &amp; bugs</a>
 </nav>
 
 <!-- ── Content ─────────────────────────────────── -->
 <main class="content">
+
+  <!-- Beta waarschuwing -->
+  <div class="callout warn" style="margin-bottom:20px;">
+    <span class="callout-icon">⚠️</span>
+    <p><strong>Beta — snel gebouwd voor JOTA 2026.</strong> Deze app is in korte tijd gemaakt voor een specifiek evenement, weinig getest en kan bugs bevatten. Gebruik op eigen risico. Feedback welkom via <a href="https://github.com/pe5jw/MultilogCat/issues" target="_blank">GitHub Issues</a>.</p>
+  </div>
 
   <!-- Hero -->
   <div class="hero">
@@ -501,6 +509,44 @@ code {
     <div class="callout info">
       <span class="callout-icon">📋</span>
       <p><strong>Licentie:</strong> Hamlib valt onder de GPL v2 licentie en mag niet meegeleverd worden in andere software. Daarom download je het zelf.</p>
+    </div>
+  </div>
+
+  <div class="section" id="linux">
+    <h2>Linux installatie <span class="badge opt">⚠️ Experimenteel — niet getest</span></h2>
+    <div class="callout warn">
+      <span class="callout-icon">⚠️</span>
+      <p><strong>MultiLogCAT is ontwikkeld en getest op Windows.</strong> Linux-ondersteuning is experimenteel en <strong>niet getest</strong>. De code is in principe cross-platform, maar er kunnen onverwachte problemen optreden. Gebruik op eigen risico.</p>
+    </div>
+
+    <h3>Automatische installatie</h3>
+    <div class="cmd-block">
+      <span class="prompt">$ </span>chmod +x install_linux.sh<br>
+      <span class="prompt">$ </span>./install_linux.sh<br>
+      <span class="prompt">$ </span>python3 multilogcat.py
+    </div>
+
+    <h3>Handmatige installatie</h3>
+    <p>Het script doet het volgende — je kunt het ook handmatig uitvoeren:</p>
+    <div class="cmd-block">
+      <span class="comment"># Ubuntu / Debian</span><br>
+      <span class="prompt">$ </span>sudo apt-get install python3 python3-tk python3-pip hamlib-utils<br>
+      <span class="prompt">$ </span>pip3 install playwright<br>
+      <span class="prompt">$ </span>playwright install chromium<br>
+      <span class="prompt">$ </span>python3 multilogcat.py
+    </div>
+
+    <h3>Linux-specifieke opmerkingen</h3>
+    <table class="field-table">
+      <tr><th>Onderwerp</th><th>Windows</th><th>Linux</th></tr>
+      <tr><td>Seriële poort</td><td><code>COM3</code></td><td><code>/dev/ttyUSB0</code> of <code>/dev/ttyS0</code></td></tr>
+      <tr><td>rigctld pad</td><td><code>C:\...\rigctld.exe</code></td><td><code>/usr/bin/rigctld</code> (via <code>which rigctld</code>)</td></tr>
+      <tr><td>Poortrechten</td><td>Niet nodig</td><td><code>sudo usermod -aG dialout $USER</code> (daarna uitloggen)</td></tr>
+    </table>
+
+    <div class="callout info">
+      <span class="callout-icon">💡</span>
+      <p>Bij netwerk-verbinding (SparkSDR / FLRig) zijn er geen Linux-specifieke aanpassingen nodig — gewoon IP en poort invullen.</p>
     </div>
   </div>
 
@@ -730,6 +776,22 @@ code {
       <span class="callout-icon">⚠️</span>
       <p>Kopieer altijd de <strong>complete</strong> map <code>dist\MultiLogCAT\</code> inclusief de <code>ms-playwright</code> submap. Zonder Chromium start de app niet.</p>
     </div>
+  </div>
+
+  <div class="section" id="beperkingen">
+    <h2>Beperkingen &amp; bekende bugs</h2>
+    <div class="callout warn">
+      <span class="callout-icon">⚠️</span>
+      <p><strong>Snel gebouwd voor JOTA 2026 — weinig getest.</strong> Deze app is in beperkte tijd ontwikkeld voor een specifiek evenement. Er kunnen bugs en onverwacht gedrag optreden. Meld bugs via <a href="https://github.com/pe5jw/MultilogCat/issues" target="_blank">GitHub Issues</a>.</p>
+    </div>
+    <table class="field-table">
+      <tr><th>Beperking</th><th>Details</th></tr>
+      <tr><td>Weinig getest</td><td>Primair getest op Windows 11 met SparkSDR. Andere configuraties mogelijk niet werkend.</td></tr>
+      <tr><td>Linux niet getest</td><td>Code is cross-platform maar Linux is nooit daadwerkelijk getest.</td></tr>
+      <tr><td>Browser blijft open</td><td>Chromium blijft zichtbaar tijdens gebruik — bewust, zodat je de site ook handmatig kunt bedienen.</td></tr>
+      <tr><td>Timing gevoelig</td><td>Bij trage verbinding kan band/mode soms iets later worden ingevuld (300ms vertraging ingebouwd).</td></tr>
+      <tr><td>Geen foutherstel</td><td>Als de browser crasht moet je de app stoppen en opnieuw starten.</td></tr>
+    </table>
   </div>
 
   <div class="section" id="problemen">
