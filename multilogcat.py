@@ -13,8 +13,30 @@ import sys
 import threading
 import time
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, filedialog
 from pathlib import Path
+import webbrowser
+
+
+def open_url(url):
+    """Open URL in standaard browser — werkt ook als webbrowser.open faalt."""
+    try:
+        webbrowser.open(url)
+    except Exception:
+        pass
+    else:
+        return
+    # Fallback voor Windows zonder standaard browser instelling
+    try:
+        if sys.platform == "win32":
+            os.startfile(url)
+        elif sys.platform == "darwin":
+            subprocess.Popen(["open", url])
+        else:
+            subprocess.Popen(["xdg-open", url])
+    except Exception as e:
+        messagebox.showerror("Link openen mislukt",
+                             f"Kan browser niet openen.\nOpen handmatig:\n{url}\n\nFout: {e}")
 
 # Wanneer gebouwd als EXE via PyInstaller: zet Playwright Chromium pad
 # zodat de browser naast de EXE gevonden wordt (ms-playwright submap)
@@ -39,13 +61,14 @@ CONFIG_FILE = SCRIPT_DIR / "config.json"
 RADIO_MODELS = [
     # ── Icom ──────────────────────────────────────────────────────────────────
     ("Icom IC-705",               "3081"),
+    ("Icom IC-7100",              "3075"),
     ("Icom IC-7300",              "3073"),
     ("Icom IC-7300MK2",           "3094"),
     ("Icom IC-7610",              "3078"),
     ("Icom IC-7700",              "3070"),
     ("Icom IC-7800",              "3060"),
     ("Icom IC-9700",              "3080"),
-    ("Icom IC-7100",              "3075"),
+    ("Icom IC-9700 v2022+",       "3081"),
     # ── Yaesu ─────────────────────────────────────────────────────────────────
     ("Yaesu FT-817",              "1021"),
     ("Yaesu FT-818",              "1059"),
@@ -434,7 +457,7 @@ class App(tk.Tk):
         lnk = ttk.Label(frm_model, text="  🔗 Hamlib lijst", foreground="#0066cc",
                         cursor="hand2", font=("Arial", 8, "underline"))
         lnk.pack(side="left")
-        lnk.bind("<Button-1>", lambda e: __import__("webbrowser").open(
+        lnk.bind("<Button-1>", lambda e: open_url(
             "https://github.com/Hamlib/Hamlib/wiki/Supported-Radios"))
 
         # Handmatig modelnummer (alleen zichtbaar bij "Anders")
@@ -498,15 +521,34 @@ class App(tk.Tk):
         hf = ttk.LabelFrame(self, text="Hamlib")
         hf.grid(row=1, column=0, columnspan=2, sticky="ew", padx=10, pady=6)
 
-        ttk.Label(hf, text="rigctld.exe pad:").grid(row=0, column=0, sticky="w", **pad)
+        rigctld_label = "rigctld.exe pad:" if sys.platform == "win32" else "rigctld pad:"
+        ttk.Label(hf, text=rigctld_label).grid(row=0, column=0, sticky="w", **pad)
         self.var_hamlib = tk.StringVar()
         frm_hamlib = ttk.Frame(hf)
         frm_hamlib.grid(row=0, column=1, columnspan=2, sticky="w")
-        ttk.Entry(frm_hamlib, textvariable=self.var_hamlib, width=44).pack(side="left")
+        ttk.Entry(frm_hamlib, textvariable=self.var_hamlib, width=38).pack(side="left")
+
+        def _browse_hamlib():
+            exe_name = "rigctld.exe" if sys.platform == "win32" else "rigctld"
+            if sys.platform == "win32":
+                filetypes = [("rigctld", "rigctld.exe"), ("Alle bestanden", "*.*")]
+            else:
+                filetypes = [("rigctld", "rigctld"), ("Alle bestanden", "*")]
+            pad_huidig = self.var_hamlib.get()
+            init_dir = str(Path(pad_huidig).parent) if pad_huidig else "/"
+            gekozen = filedialog.askopenfilename(
+                title=f"Kies {exe_name}",
+                initialdir=init_dir,
+                filetypes=filetypes,
+            )
+            if gekozen:
+                self.var_hamlib.set(gekozen)
+
+        ttk.Button(frm_hamlib, text="📂", width=3, command=_browse_hamlib).pack(side="left", padx=(4, 0))
         lnk_hamlib = ttk.Label(frm_hamlib, text="  ⬇ Download Hamlib",
                                foreground="#0066cc", cursor="hand2", font=("Arial", 8, "underline"))
         lnk_hamlib.pack(side="left")
-        lnk_hamlib.bind("<Button-1>", lambda e: __import__("webbrowser").open(
+        lnk_hamlib.bind("<Button-1>", lambda e: open_url(
             "https://github.com/Hamlib/Hamlib/releases/tag/4.7.2"))
 
         # ── Website ──────────────────────────────────────────────────────────
@@ -596,9 +638,18 @@ class App(tk.Tk):
 
     def _load_cfg_to_ui(self):
         r = self.cfg.get("radio", {})
-        model_nr = r.get("model", "3073")
-        model_name = next((m[0] for m in RADIO_MODELS if m[1] == model_nr), RADIO_MODELS[0][0])
+
+        # Herstel radio model: probeer eerst op naam, dan op nummer
+        saved_name = r.get("model_name", "")
+        saved_nr   = r.get("model", "3073")
+        model_name = next((m[0] for m in RADIO_MODELS if m[0] == saved_name), None)
+        if model_name is None:
+            model_name = next((m[0] for m in RADIO_MODELS if m[1] == saved_nr), RADIO_MODELS[0][0])
         self.var_model.set(model_name)
+
+        # Handmatig modelnummer (bij keuze "Anders")
+        self.var_manual_model.set(r.get("manual_model", ""))
+
         self.var_port.set(r.get("port", "COM3"))
         self.var_baud.set(r.get("baudrate", "9600"))
 
@@ -628,6 +679,7 @@ class App(tk.Tk):
             "radio": {
                 "model": model_nr,
                 "model_name": model_name,
+                "manual_model": self.var_manual_model.get().strip(),
                 "port_type": self.var_port_type.get(),
                 "port": self.var_port.get(),
                 "baudrate": self.var_baud.get(),
