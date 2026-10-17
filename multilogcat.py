@@ -661,7 +661,22 @@ class App(tk.Tk):
         self._on_model_select()
 
         h = self.cfg.get("hamlib", {})
-        self.var_hamlib.set(h.get("path", r"C:\dev\multilogcat\hamlib-w64-4.7.2\bin\rigctld.exe"))
+        saved_path = h.get("path", "")
+
+        # Standaard pad bepalen: kijk eerst naast de EXE/script
+        if sys.platform == "win32":
+            exe_name = "rigctld.exe"
+        else:
+            exe_name = "rigctld"
+        bundled = SCRIPT_DIR / "hamlib" / exe_name
+        if not saved_path:
+            if bundled.exists():
+                saved_path = str(bundled)
+            elif sys.platform == "win32":
+                saved_path = r"C:\Program Files\hamlib\bin\rigctld.exe"
+            else:
+                saved_path = "/usr/bin/rigctld"
+        self.var_hamlib.set(saved_path)
 
         w = self.cfg.get("website", {})
         self.var_url.set(w.get("url", "https://multilog.endoria.net/index.php"))
