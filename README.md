@@ -42,30 +42,58 @@ Je logt zelf de QSO's in — MultiLogCAT zorgt dat de frequentie altijd klopt.
 
 ---
 
-## Vereisten
+## Installatie
 
-| Software | Versie | Link |
-|---|---|---|
-| Python | 3.10+ | [python.org](https://www.python.org/downloads/) |
-| Playwright | via pip | — |
-| Chromium | via playwright | — |
-| Hamlib | 4.7.2 (alleen bij COM/tty) | [GitHub releases](https://github.com/Hamlib/Hamlib/releases/tag/4.7.2) |
+### 🖥️ Windows — EXE (makkelijkst, geen Python nodig)
 
-> **SparkSDR / FLRig gebruikers:** Hamlib is niet nodig. MultiLogCAT verbindt direct via het netwerk.
+> Aanbevolen voor de meeste gebruikers.
+
+1. Download `MultiLogCAT-v1.1.2-windows-x64.zip` van de [Releases](../../releases/latest) pagina
+2. Pak uit naar een map naar keuze (bijv. `C:\MultiLogCAT\`)
+3. Dubbelklik `MultiLogCAT_start.bat`
+4. Hamlib (`rigctld.exe`) staat al meegeleverd in de `hamlib\` map — het pad wordt automatisch ingevuld
+5. Verwijderen: dubbelklik `uninstall.bat`
 
 ---
 
-## Installatie — Windows
+### 🐍 Windows — Python (voor ontwikkelaars / vanuit broncode)
 
-```powershell
-pip install playwright
-playwright install chromium
-python multilogcat.py
+Vereisten: **Python 3.10+** — download van [python.org](https://www.python.org/downloads/) en vink **"Add Python to PATH"** aan.
+
+1. Download de broncode via de [Releases](../../releases/latest) pagina (Source code zip) of kloon de repository:
+   ```bat
+   git clone https://github.com/pe5jw/MultilogCat.git
+   cd MultilogCat
+   ```
+2. Dubbelklik `install.bat` — installeert Playwright en Chromium automatisch
+3. Start via `start.bat` of `python multilogcat.py`
+4. Verwijderen: dubbelklik `uninstall_python.bat`
+
+> Hamlib is **niet nodig** bij gebruik van netwerk-verbindingen (SparkSDR, FLRig, SDR Console).
+> Bij seriële (COM) verbinding: installeer Hamlib apart via [github.com/Hamlib/Hamlib/releases](https://github.com/Hamlib/Hamlib/releases/tag/4.7.2) of gebruik de meegeleverde `hamlib\rigctld.exe` uit de EXE-distro.
+
+---
+
+### 🔧 EXE zelf bouwen (vanuit broncode)
+
+Heb je Python en de broncode, en wil je zelf een EXE maken voor distributie?
+
+```bat
+build_exe.bat
 ```
 
-Of gebruik `install.bat` voor een begeleide installatie.
+Het script doet automatisch:
+1. Installeert PyInstaller en bouwt de EXE
+2. Plaatst Chromium naast de EXE in `dist\MultiLogCAT\ms-playwright\`
+3. Downloadt Hamlib 4.7.2 en plaatst `rigctld.exe` + DLLs in `dist\MultiLogCAT\hamlib\`
+4. Kopieert `uninstall.bat` naar de dist-map
+5. Schoont onnodige bestanden op (~140 MB kleiner)
 
-## Installatie — Linux ⚠️ experimenteel, niet getest
+Distribueer de volledige map `dist\MultiLogCAT\` — starten via `MultiLogCAT_start.bat`.
+
+---
+
+### 🐧 Linux ⚠️ experimenteel, niet getest
 
 ```bash
 chmod +x install_linux.sh
@@ -76,25 +104,23 @@ python3 multilogcat.py
 **Linux-specifieke opmerkingen:**
 - Seriële poort: gebruik `/dev/ttyUSB0` of `/dev/ttyS0` (niet `COM3`)
 - Rechten seriële poort: `sudo usermod -aG dialout $USER` (daarna uitloggen/inloggen)
-- rigctld pad: `which rigctld` geeft het pad
+- rigctld pad: `which rigctld`
 
 ---
 
-## EXE bouwen — Windows (geen Python op doelcomputer)
+## Vereisten (overzicht)
 
-```bat
-build_exe.bat
-```
-
-Het script installeert PyInstaller, bouwt de EXE en plaatst Chromium naast de EXE in `dist\MultiLogCAT\ms-playwright\`.
-Kopieer de **volledige** map `dist\MultiLogCAT\` en start via `MultiLogCAT_start.bat`.
+| Software | Versie | Nodig voor |
+|---|---|---|
+| Python | 3.10+ | Python-versie en EXE bouwen |
+| Playwright + Chromium | via pip | Alle versies |
+| Hamlib / rigctld | 4.7.2 | Seriële (COM) verbinding — **meegeleverd in EXE-distro** |
 
 ---
 
 ## Hamlib licentie
 
-Hamlib valt onder de **GPL v2** licentie en mag niet meegeleverd worden in andere software.
-Gebruik de **⬇ Download Hamlib** link in de app, of download direct van de [Hamlib releases pagina](https://github.com/Hamlib/Hamlib/releases/tag/4.7.2).
+Hamlib valt onder de **LGPL v2.1** licentie. De meegeleverde bestanden (`rigctld.exe`, DLLs) zijn ongewijzigd overgenomen van de [officiële Hamlib 4.7.2 release](https://github.com/Hamlib/Hamlib/releases/tag/4.7.2). De licentietekst is meegeleverd in de `hamlib\` map (`LICENSE.txt`, `COPYING.LIB.txt`).
 
 ---
 
