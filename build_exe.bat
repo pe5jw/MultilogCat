@@ -49,6 +49,10 @@ echo set PLAYWRIGHT_BROWSERS_PATH=%%~dp0ms-playwright
 echo start "" "%%~dp0MultiLogCAT.exe"
 ) > dist\MultiLogCAT\MultiLogCAT_start.bat
 
+REM Stap 4: Onnodige bestanden opschonen (locales, node.exe, ffmpeg, hyphen-data)
+echo [4/4] Dist opschonen...
+call cleanup_dist.bat
+
 echo.
 echo === Klaar! ===
 echo.
